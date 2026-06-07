@@ -19,7 +19,7 @@ def get_trade_features(df: pd.DataFrame, window_sizes: List[int] = [0, 150, 300,
         pd.DataFrame: DataFrame chứa các features đã được aggregated và flatten columns.
     """
     # 1. Tính toán log return ở cấp độ hàng (row-level) bằng vectorization
-    df['log_return'] = np.log(df['price']).groupby(df['time_id']).diff()
+    df['log_return'] = np.log(df['price']).groupby([df['stock_id'], df['time_id']]).diff()
     
     # 2. Định nghĩa từ điển aggregation
     create_feature_dict = {
@@ -34,11 +34,11 @@ def get_trade_features(df: pd.DataFrame, window_sizes: List[int] = [0, 150, 300,
     # 3. Tạo aggregation cho từng temporal window
     for window in window_sizes:
         df_window = df[df['seconds_in_bucket'] >= window]
-        df_agg = df_window.groupby('time_id').agg(create_feature_dict).reset_index()
+        df_agg = df_window.groupby(['stock_id', 'time_id']).agg(create_feature_dict).reset_index()
         
         # Flatten columns: 'size', 'sum' -> 'size_sum'
         df_agg.columns = ['_'.join(col).strip() for col in df_agg.columns.values]
-        df_agg = df_agg.rename(columns={'time_id_': 'time_id'})
+        df_agg = df_agg.rename(columns={'stock_id_': 'stock_id', 'time_id_': 'time_id'})
         
         # Hậu tố window size nếu không phải là full window (0)
         suffix = f"_{window}" if window > 0 else ""
@@ -46,11 +46,11 @@ def get_trade_features(df: pd.DataFrame, window_sizes: List[int] = [0, 150, 300,
         if df_feature.empty:
             df_feature = df_agg
         else:
-            # Gắn suffix cho các cột không phải time_id
-            df_agg = df_agg.rename(columns={col: f"{col}{suffix}" for col in df_agg.columns if col != 'time_id'})
-            df_feature = df_feature.merge(df_agg, how='left', on='time_id')
+            # Gắn suffix cho các cột không phải time_id, stock_id
+            df_agg = df_agg.rename(columns={col: f"{col}{suffix}" for col in df_agg.columns if col not in ['stock_id', 'time_id']})
+            df_feature = df_feature.merge(df_agg, how='left', on=['stock_id', 'time_id'])
             
     # 4. Thêm tiền tố "trade_" vào tất cả các cột để dễ phân biệt với book
-    df_feature = df_feature.rename(columns={col: f"trade_{col}" for col in df_feature.columns if col != 'time_id'})
+    df_feature = df_feature.rename(columns={col: f"trade_{col}" for col in df_feature.columns if col not in ['stock_id', 'time_id']})
     
     return df_feature
