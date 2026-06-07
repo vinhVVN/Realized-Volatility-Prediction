@@ -1,0 +1,44 @@
+# Cấu hình cho Feature Engineering
+window_sizes: [450, 300, 150]
+
+nn_features:
+  n_neighbors_max: 80
+  time_windows: [3, 5, 10, 20, 40]
+  vol_windows: [2, 3, 5, 10, 20, 40]
+  stock_windows: [10, 20, 40]
+  metrics:
+    - name: "time_price_c"
+      type: "time"
+      pivot: "real_price"
+      distance: "canberra"
+      p: 2
+    - name: "time_price_m"
+      type: "time"
+      pivot: "real_price"
+      distance: "mahalanobis"
+      p: 2
+    - name: "time_vol_l1"
+      type: "time"
+      pivot: "volatility"
+      distance: "minkowski"
+      p: 1
+    - name: "time_size_m"
+      type: "time"
+      pivot: "total_volume"
+      distance: "mahalanobis"
+      p: 2
+    - name: "time_size_c"
+      type: "time"
+      pivot: "total_volume"
+      distance: "canberra"
+      p: 2
+    - name: "stock_price_l1"
+      type: "stock"
+      pivot: "real_price"
+      distance: "minkowski"
+      p: 1
+    - name: "stock_vol_l1"
+      type: "stock"
+      pivot: "volatility"
+      distance: "minkowski"
+      p: 1

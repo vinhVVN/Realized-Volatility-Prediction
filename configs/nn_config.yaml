@@ -1,0 +1,19 @@
+# Cấu hình cho Neural Networks (CNN & MLP)
+training:
+  epochs: 100
+  batch_size: 256
+  learning_rate: 0.001
+  weight_decay: 1.0e-05
+  early_stopping_patience: 20
+  num_models: 10
+  valid_threshold: 0.185
+  model_top_n: 3
+
+cnn:
+  channels: [256, 256, 256, 128, 128, 128]
+  kernel_sizes: [5, 5, 5, 3, 3, 3]
+  dropout: 0.2
+
+mlp:
+  hidden_units: [256, 256, 128, 128]
+  dropout: 0.2

@@ -1,0 +1,12 @@
+# Cấu hình cơ bản của dự án
+project:
+  name: "Optiver Realized Volatility Prediction"
+  seed: 42
+
+paths:
+  data_dir: "data"
+  raw_dir: "data/raw/optiver-realized-volatility-prediction"
+  processed_dir: "data/processed"
+  model_dir: "models"
+  log_dir: "logs"
+  submission_dir: "data/submissions"

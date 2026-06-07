@@ -1,0 +1,6 @@
+# Cấu hình cho Ensemble
+strategy: "mean" # 'mean', 'weighted'
+weights:
+  lgbm: 0.5
+  cnn: 0.25
+  mlp: 0.25

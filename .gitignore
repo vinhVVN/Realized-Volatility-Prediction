@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Project specifics
+data/
+models/
+notebooks/.ipynb_checkpoints/
+logs/
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+references/1st-place-public-2nd-place-solution.ipynb
+references/writeups-nyanp-1st-place-solution-nearest-neighbors-2026-06-06-10_03_36.pdf
+implementation_plan.md
+project_architecture.md
+theory_notes.md
