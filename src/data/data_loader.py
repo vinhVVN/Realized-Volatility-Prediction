@@ -3,6 +3,7 @@ import glob
 from enum import Enum
 import pandas as pd
 from joblib import Parallel, delayed
+from typing import List, Optional
 from src.utils.logger import get_logger
 
 logger = get_logger("data_loader")
@@ -71,24 +72,25 @@ class DataLoader:
             logger.error(f"Lỗi khi đọc file {file_path}: {e}")
             return pd.DataFrame()
 
-    def load_parquet_parallel(self, data_type: str, block: DataBlock = DataBlock.TRAIN, n_jobs: int = -1) -> pd.DataFrame:
+    def load_parquet_parallel(self, data_type: str, block: DataBlock = DataBlock.TRAIN, n_jobs: int = 4, stock_ids: Optional[List[int]] = None) -> pd.DataFrame:
         """
-        Đọc tất cả các file parquet của một loại dữ liệu ('book' hoặc 'trade') song song.
+        Đọc các file parquet của một loại dữ liệu ('book' hoặc 'trade') song song.
         
         Args:
             data_type (str): 'book' hoặc 'trade'.
             block (DataBlock): Nhóm dữ liệu cần lấy (TRAIN hoặc TEST).
-            n_jobs (int): Số lượng core sử dụng để xử lý song song (-1: dùng tất cả).
+            n_jobs (int): Số lượng core sử dụng để xử lý song song (khuyên dùng 4 để tránh OOM).
+            stock_ids (List[int], optional): Danh sách các stock_id cần đọc. Nếu None, đọc tất cả.
             
         Returns:
-            pd.DataFrame: DataFrame tổng hợp chứa tất cả dữ liệu.
+            pd.DataFrame: DataFrame tổng hợp chứa dữ liệu được yêu cầu.
         """
         if data_type not in ['book', 'trade']:
             raise ValueError("data_type phải là 'book' hoặc 'trade'")
             
         if block == DataBlock.BOTH:
-            df_train = self.load_parquet_parallel(data_type, DataBlock.TRAIN, n_jobs)
-            df_test = self.load_parquet_parallel(data_type, DataBlock.TEST, n_jobs)
+            df_train = self.load_parquet_parallel(data_type, DataBlock.TRAIN, n_jobs, stock_ids)
+            df_test = self.load_parquet_parallel(data_type, DataBlock.TEST, n_jobs, stock_ids)
             return pd.concat([df_train, df_test], ignore_index=True)
             
         target_dir = os.path.join(self.data_dir, f"{data_type}_{block.value}.parquet")
@@ -97,15 +99,21 @@ class DataLoader:
             logger.warning(f"Thư mục không tồn tại: {target_dir}")
             return pd.DataFrame()
             
-        # Tìm tất cả các file parquet con
-        file_patterns = os.path.join(target_dir, "stock_id=*", "*.parquet")
-        files = glob.glob(file_patterns)
+        # Nếu có danh sách stock_ids, chỉ tìm các file thuộc các stock đó để tiết kiệm RAM
+        if stock_ids is not None:
+            files = []
+            for stock_id in set(stock_ids):
+                pattern = os.path.join(target_dir, f"stock_id={stock_id}", "*.parquet")
+                files.extend(glob.glob(pattern))
+        else:
+            file_patterns = os.path.join(target_dir, "stock_id=*", "*.parquet")
+            files = glob.glob(file_patterns)
         
         if not files:
             logger.warning(f"Không tìm thấy file parquet nào trong: {target_dir}")
             return pd.DataFrame()
             
-        logger.info(f"Đang đọc song song {len(files)} file {data_type} {block.value}...")
+        logger.info(f"Đang đọc song song {len(files)} file {data_type} {block.value} (n_jobs={n_jobs})...")
         
         dfs = Parallel(n_jobs=n_jobs)(delayed(DataLoader._read_single_stock)(file) for file in files)
         

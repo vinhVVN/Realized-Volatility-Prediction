@@ -44,9 +44,15 @@ def build_features(df_train: pd.DataFrame, data_dir: str, block: DataBlock, conf
         
     loader = DataLoader(data_dir=data_dir)
     
+    # Lấy danh sách stock_id từ tập df_train truyền vào để filter, CHỐNG OOM CỰC KỲ HIỆU QUẢ!
+    stock_ids = None
+    if 'stock_id' in df_train.columns:
+        stock_ids = df_train['stock_id'].unique().tolist()
+        logger.info(f"Đã phát hiện {len(stock_ids)} unique stock_id trong df_train. Tiến hành filter dữ liệu đọc vào RAM.")
+    
     with timer("a) Đọc dữ liệu Book và Trade song song", logger):
-        df_book = loader.load_parquet_parallel('book', block=block)
-        df_trade = loader.load_parquet_parallel('trade', block=block)
+        df_book = loader.load_parquet_parallel('book', block=block, stock_ids=stock_ids)
+        df_trade = loader.load_parquet_parallel('trade', block=block, stock_ids=stock_ids)
         
         if df_book.empty and df_trade.empty:
             logger.warning("Không lấy được bất kỳ data nào. Trả về dataframe ban đầu.")
