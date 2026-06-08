@@ -66,8 +66,9 @@ class TimeIdNeighbors(NeighborFeatures):
             VI = np.linalg.pinv(cov_matrix)
             metric_params = {'VI': VI}
             
+        actual_neighbors = max(1, min(self.n_neighbors_max, scaled_values.shape[0]))
         self.knn = NearestNeighbors(
-            n_neighbors=self.n_neighbors_max, 
+            n_neighbors=actual_neighbors, 
             metric=self.metric, 
             p=self.p, 
             n_jobs=-1,
@@ -85,7 +86,8 @@ class TimeIdNeighbors(NeighborFeatures):
             target_pivot = df.pivot(index='time_id', columns='stock_id', values=target_col).values
             
             for n in n_windows:
-                k_indices = self.neighbor_indices[:, :n]
+                actual_n = min(n, actual_neighbors)
+                k_indices = self.neighbor_indices[:, :actual_n]
                 neighbor_values = target_pivot[k_indices]
                 
                 mean_val = np.nanmean(neighbor_values, axis=1)
@@ -164,8 +166,9 @@ class StockIdNeighbors(NeighborFeatures):
             VI = np.linalg.pinv(cov_matrix)
             metric_params = {'VI': VI}
             
+        actual_neighbors = max(1, min(self.n_neighbors_max, scaled_values.shape[0]))
         self.knn = NearestNeighbors(
-            n_neighbors=self.n_neighbors_max, 
+            n_neighbors=actual_neighbors, 
             metric=self.metric, 
             p=self.p, 
             n_jobs=-1,
@@ -182,7 +185,8 @@ class StockIdNeighbors(NeighborFeatures):
             target_pivot = df.pivot(index='stock_id', columns='time_id', values=target_col).values
             
             for n in n_windows:
-                k_indices = self.neighbor_indices[:, :n]
+                actual_n = min(n, actual_neighbors)
+                k_indices = self.neighbor_indices[:, :actual_n]
                 neighbor_values = target_pivot[k_indices]
                 
                 mean_val = np.nanmean(neighbor_values, axis=1)
