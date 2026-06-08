@@ -99,7 +99,7 @@ class TimeIdNeighbors(NeighborFeatures):
                 def stack_matrix(mat, feat_name):
                     temp_df = pd.DataFrame(mat, index=time_idx, columns=stock_cols)
                     if SUPPORTS_FUTURE_STACK:
-                        return temp_df.stack(dropna=False, future_stack=True).reset_index(name=feat_name)
+                        return temp_df.stack(future_stack=True).reset_index(name=feat_name)
                     else:
                         return temp_df.stack(dropna=False).reset_index(name=feat_name)
                 
@@ -196,7 +196,7 @@ class StockIdNeighbors(NeighborFeatures):
                 def stack_matrix(mat, feat_name):
                     temp_df = pd.DataFrame(mat, index=stock_idx, columns=time_cols)
                     if SUPPORTS_FUTURE_STACK:
-                        return temp_df.stack(dropna=False, future_stack=True).reset_index(name=feat_name)
+                        return temp_df.stack(future_stack=True).reset_index(name=feat_name)
                     else:
                         return temp_df.stack(dropna=False).reset_index(name=feat_name)
                 
