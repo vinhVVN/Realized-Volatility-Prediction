@@ -25,8 +25,8 @@ def get_trade_features(df: pd.DataFrame, window_sizes: List[int] = [0, 150, 300,
     create_feature_dict = {
         'log_return': [realized_volatility],
         'seconds_in_bucket': ['count'],
-        'size': [np.sum],
-        'order_count': [np.mean]
+        'size': ['sum'],
+        'order_count': ['mean']
     }
     
     df_feature = pd.DataFrame()

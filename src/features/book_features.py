@@ -35,16 +35,16 @@ def get_book_features(df: pd.DataFrame, window_sizes: List[int] = [0, 150, 300, 
     
     # 2. Định nghĩa từ điển aggregation
     create_feature_dict = {
-        'wap1': [np.sum, np.mean, np.std],
-        'wap2': [np.sum, np.mean, np.std],
-        'log_return1': [np.sum, realized_volatility, np.mean, np.std],
-        'log_return2': [np.sum, realized_volatility, np.mean, np.std],
-        'wap_balance': [np.sum, np.mean, np.std],
-        'price_spread': [np.sum, np.mean, np.std],
-        'bid_spread': [np.sum, np.mean, np.std],
-        'ask_spread': [np.sum, np.mean, np.std],
-        'total_volume': [np.sum, np.mean, np.std],
-        'volume_imbalance': [np.sum, np.mean, np.std]
+        'wap1': ['sum', 'mean', 'std'],
+        'wap2': ['sum', 'mean', 'std'],
+        'log_return1': ['sum', realized_volatility, 'mean', 'std'],
+        'log_return2': ['sum', realized_volatility, 'mean', 'std'],
+        'wap_balance': ['sum', 'mean', 'std'],
+        'price_spread': ['sum', 'mean', 'std'],
+        'bid_spread': ['sum', 'mean', 'std'],
+        'ask_spread': ['sum', 'mean', 'std'],
+        'total_volume': ['sum', 'mean', 'std'],
+        'volume_imbalance': ['sum', 'mean', 'std']
     }
     
     df_feature = pd.DataFrame()
