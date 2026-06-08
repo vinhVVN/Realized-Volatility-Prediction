@@ -33,7 +33,7 @@ class NNTrainer:
         
         # Lịch trình giảm LR: Giảm một nửa (factor=0.5) nếu loss không giảm sau 5 epoch
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, mode='min', factor=0.5, patience=5, verbose=True
+            self.optimizer, mode='min', factor=0.5, patience=5
         )
         
     def train(self, X_train: np.ndarray, y_train: np.ndarray, 
