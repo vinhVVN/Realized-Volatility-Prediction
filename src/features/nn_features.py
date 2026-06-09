@@ -51,7 +51,8 @@ class TimeIdNeighbors(NeighborFeatures):
         
         # 1. Pivot dữ liệu: rows = time_id, columns = stock_id
         pivot_df = df.pivot(index='time_id', columns='stock_id', values=pivot_col)
-        pivot_df = pivot_df.fillna(pivot_df.mean())
+        # Chống lỗi nguyên cột toàn NaN khiến mean() cũng ra NaN
+        pivot_df = pivot_df.fillna(pivot_df.mean()).fillna(0)
         
         # Scale dữ liệu vào khoảng 0-1
         scaler = MinMaxScaler()
@@ -159,7 +160,8 @@ class StockIdNeighbors(NeighborFeatures):
         
         # 1. Pivot dữ liệu: rows = stock_id, columns = time_id
         pivot_df = df.pivot(index='stock_id', columns='time_id', values=pivot_col)
-        pivot_df = pivot_df.fillna(pivot_df.mean())
+        # Chống lỗi nguyên cột toàn NaN khiến mean() cũng ra NaN
+        pivot_df = pivot_df.fillna(pivot_df.mean()).fillna(0)
         
         scaler = MinMaxScaler()
         scaled_values = scaler.fit_transform(pivot_df.values)
