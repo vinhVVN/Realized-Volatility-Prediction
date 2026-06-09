@@ -61,9 +61,15 @@ class TimeIdNeighbors(NeighborFeatures):
         metric_params = None
         if self.metric == 'mahalanobis':
             # Tính pseudo-inverse (pinv) của ma trận hiệp phương sai để tránh lỗi Singular Matrix
-            # rowvar=False vì features nằm ở các cột (stock_id)
-            cov_matrix = np.cov(scaled_values, rowvar=False)
-            VI = np.linalg.pinv(cov_matrix)
+            if scaled_values.shape[0] > 1 and scaled_values.shape[1] > 1:
+                cov_matrix = np.cov(scaled_values, rowvar=False)
+                cov_matrix = np.atleast_2d(cov_matrix)
+                # Ngăn ngừa NaNs nếu dữ liệu nhiễu/quá bé
+                cov_matrix = np.nan_to_num(cov_matrix, nan=1e-5)
+                VI = np.linalg.pinv(cov_matrix)
+            else:
+                # Fallback về Ma trận Đơn vị (tương đương Euclidean) đối với Test Set siêu nhỏ
+                VI = np.eye(scaled_values.shape[1])
             metric_params = {'VI': VI}
             
         actual_neighbors = max(1, min(self.n_neighbors_max, scaled_values.shape[0]))
@@ -162,8 +168,13 @@ class StockIdNeighbors(NeighborFeatures):
         metric_params = None
         if self.metric == 'mahalanobis':
             # Tính pseudo-inverse (pinv) cho cov matrix chống Singular Matrix
-            cov_matrix = np.cov(scaled_values, rowvar=False)
-            VI = np.linalg.pinv(cov_matrix)
+            if scaled_values.shape[0] > 1 and scaled_values.shape[1] > 1:
+                cov_matrix = np.cov(scaled_values, rowvar=False)
+                cov_matrix = np.atleast_2d(cov_matrix)
+                cov_matrix = np.nan_to_num(cov_matrix, nan=1e-5)
+                VI = np.linalg.pinv(cov_matrix)
+            else:
+                VI = np.eye(scaled_values.shape[1])
             metric_params = {'VI': VI}
             
         actual_neighbors = max(1, min(self.n_neighbors_max, scaled_values.shape[0]))
