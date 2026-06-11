@@ -93,9 +93,9 @@ Hệ thống được thiết kế với tư duy của một **Machine Learning 
 ## 📊 Bảng Xếp Hạng Hiệu Năng (Performance Ledger)
 | Giai đoạn | Thuật toán / Kỹ thuật | Trạng thái RAM | Điểm RMSPE (Càng thấp càng tốt) |
 | :--- | :--- | :--- | :--- |
-| **Initial Baseline** | 1D-CNN Cơ bản (Bị Gradient Explosion) | 💥 OOM Crash | `0.77407` |
-| **Mid-stage** | LightGBM + Base Features | 🟢 Ổn định | `0.22733` |
-| **Final System** | **Hybrid Ensemble + Surgical Memory Nuke** | 🟢 **< 2GB Peak** | **`0.24940` (Private LB)** |
+| **Initial Baseline** | 1D-CNN Cơ bản (Bị Gradient Explosion) | 💥 OOM Crash | `0.77407` (Trên tập Test) |
+| **Mid-stage** | LightGBM + Base Features | 🟢 Ổn định | `0.22733` (Trên tập Test) |
+| **Final System** | **Hybrid Ensemble + Surgical Memory Nuke** | 🟢 **< 2GB Peak** | **`0.24940` (Tập Test Private của cuộc thi)** |
 
 *Thành tựu lớn nhất không chỉ nằm ở con số RMSPE, mà là việc xây dựng thành công một kiến trúc Quantitative Pipeline bền bỉ, không rò rỉ dữ liệu, và có thể deploy trực tiếp vào môi trường Production của các Tech Studios.*
 
